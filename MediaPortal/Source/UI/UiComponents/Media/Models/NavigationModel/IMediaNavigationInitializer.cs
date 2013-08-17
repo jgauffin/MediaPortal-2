@@ -23,6 +23,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using MediaPortal.UiComponents.Media.Models.ScreenData;
+using MediaPortal.UiComponents.Media.Settings;
 
 namespace MediaPortal.UiComponents.Media.Models.NavigationModel
 {
@@ -47,5 +50,28 @@ namespace MediaPortal.UiComponents.Media.Models.NavigationModel
     /// <param name="mediaNavigationMode">MediaNavigationMode</param>
     /// <param name="navigationData">NavigationData</param>
     void InitMediaNavigation(out string mediaNavigationMode, out NavigationData navigationData);
+  }
+
+  /// <summary>
+  /// <see cref="IMediaNavigationConfig"/> provides information about screens and layout types for the media navigation.
+  /// </summary>
+  public interface IMediaNavigationConfig
+  {
+    /// <summary>
+    /// Gets the preferred <paramref name="nextScreenData"/> for the current given <paramref name="currentScreen"/> out of the <paramref name="availableScreens"/>.
+    /// </summary>
+    /// <param name="currentScreen">Current screen.</param>
+    /// <param name="availableScreens">List of remaining valid screens.</param>
+    /// <param name="nextScreenData">Outputs the next preferred screen.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    bool GetNextScreenData(AbstractScreenData currentScreen, IEnumerable<AbstractScreenData> availableScreens, out AbstractScreenData nextScreenData);
+
+    /// <summary>
+    /// Gets the preferred <paramref name="layoutType"/> for the given <paramref name="currentScreen"/>.
+    /// </summary>
+    /// <param name="currentScreen">Current screen.</param>
+    /// <param name="layoutType">Outputs the preferred layout type.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    bool GetLayoutType(AbstractScreenData currentScreen, out LayoutType layoutType);
   }
 }

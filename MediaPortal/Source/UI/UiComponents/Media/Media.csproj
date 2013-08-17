@@ -139,6 +139,7 @@
     <Compile Include="Models\IPlayerUIContributor.cs" />
     <Compile Include="Models\DVDPlayerUIContributor.cs" />
     <Compile Include="Models\NavigationModel\AudioNavigation.cs" />
+    <Compile Include="Models\NavigationModel\BaseNavigation.cs" />
     <Compile Include="Models\NavigationModel\IMediaNavigationInitializer.cs" />
     <Compile Include="Models\NavigationModel\ImagesNavigation.cs" />
     <Compile Include="Models\NavigationModel\MoviesNavigation.cs" />

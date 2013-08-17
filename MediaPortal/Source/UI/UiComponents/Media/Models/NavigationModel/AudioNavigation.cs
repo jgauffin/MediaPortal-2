@@ -33,8 +33,19 @@ using MediaPortal.UiComponents.Media.Views;
 
 namespace MediaPortal.UiComponents.Media.Models.NavigationModel
 {
-  class AudioNavigation : IMediaNavigationInitializer
+  class AudioNavigation : BaseNavigation, IMediaNavigationInitializer
   {
+    public AudioNavigation()
+    {
+      _navigationTree[typeof(AudioFilterByArtistScreenData)] = typeof(AudioFilterByAlbumScreenData);
+      _navigationTree[typeof(AudioFilterByAlbumScreenData)] = typeof(AudioShowItemsScreenData);
+      _navigationTree[typeof(AudioFilterByDecadeScreenData)] = typeof(AudioShowItemsScreenData);
+      _navigationTree[typeof(AudioSimpleSearchScreenData)] = typeof(AudioShowItemsScreenData);
+
+      // TODO: add layout types per screen data definition here
+      //_layoutTypes[..]
+    }
+
     public string MediaNavigationMode
     {
       get { return Models.MediaNavigationMode.Audio; }
@@ -57,13 +68,14 @@ namespace MediaPortal.UiComponents.Media.Models.NavigationModel
       {
         MaxNumItems = Consts.MAX_NUM_ITEMS_VISIBLE
       };
-      AbstractScreenData filterByAlbum = new AudioFilterByAlbumScreenData();
+      AbstractScreenData filterByArtist = new AudioFilterByArtistScreenData();
+
       ICollection<AbstractScreenData> availableScreens = new List<AbstractScreenData>
         {
           new AudioShowItemsScreenData(picd),
-          new AudioFilterByArtistScreenData(),
-          filterByAlbum,
+          filterByArtist,
           // C# doesn't like it to have an assignment inside a collection initializer
+          new AudioFilterByAlbumScreenData(),
           new AudioFilterByGenreScreenData(),
           new AudioFilterByDecadeScreenData(),
           new AudioFilterBySystemScreenData(),
@@ -82,7 +94,7 @@ namespace MediaPortal.UiComponents.Media.Models.NavigationModel
           new SortBySystem(),
         };
       navigationData = new NavigationData(null, Consts.RES_AUDIO_VIEW_NAME, MediaNavigationRootState,
-        MediaNavigationRootState, rootViewSpecification, filterByAlbum, availableScreens, sortByAlbumTrack)
+        MediaNavigationRootState, rootViewSpecification, filterByArtist, availableScreens, sortByAlbumTrack)
       {
         AvailableSortings = availableSortings
       };

@@ -29,12 +29,27 @@ using MediaPortal.UiComponents.Media.General;
 using MediaPortal.UiComponents.Media.Models.Navigation;
 using MediaPortal.UiComponents.Media.Models.ScreenData;
 using MediaPortal.UiComponents.Media.Models.Sorting;
+using MediaPortal.UiComponents.Media.Settings;
 using MediaPortal.UiComponents.Media.Views;
 
 namespace MediaPortal.UiComponents.Media.Models.NavigationModel
 {
-  class SeriesNavigation : IMediaNavigationInitializer
+  class SeriesNavigation : BaseNavigation, IMediaNavigationInitializer
   {
+    public SeriesNavigation()
+    {
+      _navigationTree[typeof(SeriesFilterByNameScreenData)] = typeof(SeriesFilterBySeasonScreenData);
+      _navigationTree[typeof(SeriesFilterBySeasonScreenData)] = typeof(SeriesShowItemsScreenData);
+      _navigationTree[typeof(VideosFilterByLanguageScreenData)] = typeof(SeriesFilterByNameScreenData);
+      _navigationTree[typeof(VideosFilterByGenreScreenData)] = typeof(SeriesFilterByNameScreenData);
+      _navigationTree[typeof(VideosSimpleSearchScreenData)] = typeof(SeriesShowItemsScreenData);
+
+      // TODO: add layout types per screen data definition here
+      _layoutTypes[typeof(SeriesFilterByNameScreenData)] = LayoutType.CoverLayout;
+      _layoutTypes[typeof(SeriesFilterBySeasonScreenData)] = LayoutType.ListLayout;
+
+    }
+
     public string MediaNavigationMode
     {
       get { return Models.MediaNavigationMode.Series; }
@@ -58,7 +73,7 @@ namespace MediaPortal.UiComponents.Media.Models.NavigationModel
         MaxNumItems = Consts.MAX_NUM_ITEMS_VISIBLE
       };
       AbstractScreenData filterBySeries = new SeriesFilterByNameScreenData();
-      ICollection<AbstractScreenData> availableScreens = new List<AbstractScreenData>
+      _availableScreens = new List<AbstractScreenData>
         {
           new SeriesShowItemsScreenData(picd),
           filterBySeries,
@@ -78,7 +93,7 @@ namespace MediaPortal.UiComponents.Media.Models.NavigationModel
           new SortBySystem(),
         };
       navigationData = new NavigationData(null, Consts.RES_SERIES_VIEW_NAME, MediaNavigationRootState,
-        MediaNavigationRootState, rootViewSpecification, filterBySeries, availableScreens, sortByEpisode)
+        MediaNavigationRootState, rootViewSpecification, filterBySeries, _availableScreens, sortByEpisode)
       {
         AvailableSortings = availableSortings
       };

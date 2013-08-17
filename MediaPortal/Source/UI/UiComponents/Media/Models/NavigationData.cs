@@ -29,6 +29,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.Localization;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
+using MediaPortal.UiComponents.Media.Models.NavigationModel;
 using MediaPortal.UiComponents.Media.Views;
 using MediaPortal.UiComponents.Media.General;
 using MediaPortal.UiComponents.Media.Models.ScreenData;
@@ -243,17 +244,28 @@ namespace MediaPortal.UiComponents.Media.Models
     /// presenting the result of a filter, where the menu must be changed.
     /// </summary>
     /// <param name="subViewSpecification">Specification for the sub view to be shown in the new navigation context.</param>
+    /// <param name="currentScreen">The current screen from where the navigation started.</param>
     /// <param name="remainingScreens">New collection of remaining available screens.</param>
     /// <param name="navbarDisplayLabel">Display label to be shown in the navigation bar for the new navigation context.</param>
     /// <returns>Newly created navigation data.</returns>
-    public NavigationData StackAutonomousNavigationContext(ViewSpecification subViewSpecification,
-        ICollection<AbstractScreenData> remainingScreens, string navbarDisplayLabel)
+    public NavigationData StackAutonomousNavigationContext(ViewSpecification subViewSpecification, AbstractScreenData currentScreen, ICollection<AbstractScreenData> remainingScreens, string navbarDisplayLabel)
     {
       WorkflowState newState = WorkflowState.CreateTransientState(
           "View: " + subViewSpecification.ViewDisplayName, subViewSpecification.ViewDisplayName,
           false, null, false, WorkflowType.Workflow);
+
+      // Default way: always take the first of the available screens.
+      AbstractScreenData nextScreen = null;
+
+      foreach (IMediaNavigationConfig mediaNavigationConfig in MediaNavigationModel.NavigationConfiguration)
+        if (mediaNavigationConfig.GetNextScreenData(currentScreen, remainingScreens, out nextScreen))
+          break;
+
+      if (nextScreen == null)
+        nextScreen = remainingScreens.FirstOrDefault(s => s != currentScreen);
+
       NavigationData newNavigationData = new NavigationData(this, subViewSpecification.ViewDisplayName,
-          newState.StateId, newState.StateId, subViewSpecification, remainingScreens.FirstOrDefault(), remainingScreens,
+          newState.StateId, newState.StateId, subViewSpecification, nextScreen, remainingScreens,
           _currentSorting);
       PushNewNavigationWorkflowState(newState, navbarDisplayLabel, newNavigationData);
       return newNavigationData;
